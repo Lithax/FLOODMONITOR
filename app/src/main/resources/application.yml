@@ -1,0 +1,37 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: flood-monitor-api
+  
+  jackson:
+    serialization:
+      indent-output: true # Pretty prints JSON/XML for easier reading
+      write-dates-as-timestamps: false # CRITICAL: Ensures java.time outputs as ISO-8601 strings
+      fail-on-empty-beans: false
+    default-property-inclusion: non_null # Omits null fields in responses
+
+simulation:
+  enabled: true
+  interval: 10000
+
+  water-level-variance: 5.0
+  rainfall-variance: 2.0
+  battery-drain-rate: 0.1
+
+springdoc:
+  api-docs:
+    path: /v1/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+    com.yourpackage.floodmonitor: DEBUG 

@@ -11,8 +11,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     id("org.springframework.boot") version "3.3.3"
     id("io.spring.dependency-management") version "1.1.6"
-    // Apply the application plugin to add support for building a CLI application in Java.
-    application
 }
 
 repositories {
@@ -24,6 +22,13 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    
+    // Add Jackson XML exactly like this:
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }
 
 testing {
@@ -41,9 +46,4 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(26)
     }
-}
-
-application {
-    // Define the main class for the application.
-    mainClass = "tgm.mbaumgartner.App"
 }
