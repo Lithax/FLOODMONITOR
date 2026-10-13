@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseEntity
 
 @RestController
-@RequestMapping("/api/stations")
+@RequestMapping("/api/v1/stations")
 @Tag(name = "Stations", description = "Measuring stations and their measurements")
 class StationController(private var stationService: StationService) {
     @Operation(summary = "Get all stations", description = "Optionally filtered by river, isActive and the current warningLevel.")

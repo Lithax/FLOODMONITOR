@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import kotlin.random.Random
 import kotlin.time.Clock
-import kotlin.time.Instant
+import java.time.Instant
 
 @Service
 class StationService {
@@ -54,7 +54,7 @@ class StationService {
         for ((id, station) in stations) {
             if(!station.isActive || station.status == StationStatus.OFFLINE) continue
             
-            var now: Instant = Clock.System.now()
+            var now: Instant = Instant.now()
             var newWaterLevel: Double
             var newFlowRate: Double
             var newRainfall: Double

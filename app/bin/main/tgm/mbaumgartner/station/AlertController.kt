@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/alerts")
+@RequestMapping("/api/v1/alerts")
 @Tag(name = "Alerts", description = "Current warnings")
 class AlertController(private var stationService: StationService) {
     @Operation(summary = "Get current warnings", description = "Current warning level per station, optionally filtered by warningLevel and river.")

@@ -1,6 +1,6 @@
 package tgm.mbaumgartner.station
 
-import kotlin.time.Instant
+import java.time.Instant
 
 data class StationData(
     var timestamp: Instant,

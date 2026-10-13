@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import kotlin.time.Clock
-import kotlin.time.Instant
+import java.time.Instant
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -116,7 +116,7 @@ class GlobalExceptionHandler {
 
 @JacksonXmlRootElement(localName = "errorResponse")
 data class ErrorResponse(
-    val timestamp: Instant = Clock.System.now(),
+    val timestamp: Instant = Instant.now(),
     val status: Int,
     val error: String,
     val message: String,

@@ -18,7 +18,7 @@ import tgm.mbaumgartner.station.StationData
 import tgm.mbaumgartner.station.StationService
 import tgm.mbaumgartner.station.StationStatus
 import tgm.mbaumgartner.station.WarningLevel
-import kotlin.time.Instant
+import java.time.Instant
 
 // The simulator is switched off and all measurements are seeded by hand, so nothing here is random.
 // Station 0 (A2-Wien): normal 230, warning 300, critical 400.
