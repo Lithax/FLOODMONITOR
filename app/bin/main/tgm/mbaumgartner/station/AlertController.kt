@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/")
 class AlertController(private var stationService: StationService) {
     @GetMapping("/alerts", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
-    fun getStationMeasurements(stationAlertFilter: StationAlertFilter): ResponseEntity<List<WarningLevel>> {
+    fun getStationMeasurements(filter: StationAlertFilter): ResponseEntity<List<WarningLevel>> {
         var alerts: MutableList<WarningLevel> = ArrayList()
-        for(station in stationService.filterStations(stationAlertFilter)) {
+        for(station in stationService.filterStations(filter)) {
             var measurements = station.measurements
             if(measurements.isEmpty()) continue
             alerts.add(measurements.last().warningLevel)

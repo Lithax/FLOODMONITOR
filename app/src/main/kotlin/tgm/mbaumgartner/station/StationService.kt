@@ -18,7 +18,12 @@ class StationService {
     }
     
     fun filterMeasurements(id: Int, filter: StationDataFilter): List<StationData> {
-        return getStation(id).measurements.filter(filter::matches)
+        var stations = getStation(id).measurements.filter(filter::matches)
+        if(filter.limit != null)
+            if(filter.limit < 1)
+                return stations.subList(0, filter.limit)
+            else throw IllegalArgumentException("Filter limit > 0")
+        return stations
     }
     
     fun filterStations(filter: StationFilter): List<Station> {

@@ -13,13 +13,13 @@ import org.springframework.http.ResponseEntity
 @RequestMapping("/stations")
 class StationController(private var stationService: StationService) {
     @GetMapping(produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
-    fun getStations(stationFilter: StationFilter): ResponseEntity<StationsResponse> = ResponseEntity.status(OK).body(StationsResponse(stationService.filterStations(stationFilter)))
+    fun getStations(filter: StationFilter): ResponseEntity<StationsResponse> = ResponseEntity.status(OK).body(StationsResponse(stationService.filterStations(filter)))
     
     @GetMapping("/{stationId}", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
     fun getStation(@PathVariable stationId: Int): ResponseEntity<Station> = ResponseEntity.status(OK).body(stationService.stations.getValue(stationId))
 
     @GetMapping("/{stationId}/measurements", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
-    fun getStationMeasurements(@PathVariable stationId: Int): ResponseEntity<Collection<StationData>> = ResponseEntity.ok().body(stationService.getStation(stationId).measurements)
+    fun getStationMeasurements(@PathVariable stationId: Int, filter: StationDataFilter): ResponseEntity<Collection<StationData>> = ResponseEntity.ok().body(stationService.filterMeasurements(stationId, filter))
     
     @GetMapping("/{stationId}/measurements/latest", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
     fun getStationLatestMeasurement(@PathVariable stationId: Int): ResponseEntity<StationData> = ResponseEntity.ok().body(stationService.getStation(stationId).measurements.last())
