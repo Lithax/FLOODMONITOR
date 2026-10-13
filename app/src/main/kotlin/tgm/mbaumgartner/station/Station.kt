@@ -12,6 +12,7 @@ data class Station(
     var normalWaterLevel: Double,
     var warningWaterLevel: Double,
     var criticalWaterLevel: Double,
+    var status: StationStatus = StationStatus.ONLINE
 ) {
-    val measurements: List<StationData> = ArrayList()
+    val measurements: MutableList<StationData> = ArrayList()
 }

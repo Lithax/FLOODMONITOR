@@ -1,6 +1,10 @@
 package tgm.mbaumgartner.station
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import org.springframework.http.HttpStatus.*
+import org.springframework.http.MediaType.*
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.http.ResponseEntity
@@ -8,14 +12,23 @@ import org.springframework.http.ResponseEntity
 @RestController
 @RequestMapping("/stations")
 class StationController(private var stationService: StationService) {
-    @GetMapping("/")
-    fun getStations(): ResponseEntity<Collection<Station>> = ResponseEntity.status(OK).body(stationService.stations.values)
+    @GetMapping(produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
+    fun getStations(stationFilter: StationFilter): ResponseEntity<StationsResponse> = ResponseEntity.status(OK).body(StationsResponse(stationService.filterStations(stationFilter)))
     
-    @GetMapping("/{stationId}")
-    fun getStation(@PathVariable stationId: Int): ResponseEntity<Station> = ResponseEntity.status(OK).body(stationService.stations.getOrElse(stationId, null))
+    @GetMapping("/{stationId}", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
+    fun getStation(@PathVariable stationId: Int): ResponseEntity<Station> = ResponseEntity.status(OK).body(stationService.stations.getValue(stationId))
 
-    @GetMapping("/{stationId}/measurements/latest")
-    fun getStationMeasurements(@PathVariable stationId: Int): ResponseEntity<StationData> {
-        
-    }
+    @GetMapping("/{stationId}/measurements", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
+    fun getStationMeasurements(@PathVariable stationId: Int): ResponseEntity<Collection<StationData>> = ResponseEntity.ok().body(stationService.getStation(stationId).measurements)
+    
+    @GetMapping("/{stationId}/measurements/latest", produces = [APPLICATION_JSON_VALUE, APPLICATION_XML_VALUE])
+    fun getStationLatestMeasurement(@PathVariable stationId: Int): ResponseEntity<StationData> = ResponseEntity.ok().body(stationService.getStation(stationId).measurements.last())
 }
+
+
+@JacksonXmlRootElement(localName = "stations")
+data class StationsResponse(
+    @get:JacksonXmlElementWrapper(useWrapping = false)
+    @get:JacksonXmlProperty(localName = "station")
+    val stations: Collection<Station>
+)

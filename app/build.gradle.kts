@@ -7,10 +7,10 @@
  */
 
 plugins {
-    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    alias(libs.plugins.kotlin.jvm)
-    id("org.springframework.boot") version "3.3.3"
-    id("io.spring.dependency-management") version "1.1.6"
+    kotlin("jvm") version "2.4.20"
+    kotlin("plugin.spring") version "2.4.20"
+    id("org.springframework.boot") version "4.1.1"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 repositories {
@@ -46,4 +46,8 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(26)
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
