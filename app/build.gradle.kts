@@ -26,6 +26,9 @@ dependencies {
     
     // Add Jackson XML exactly like this:
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+
+    // OpenAPI / Swagger UI (3.1.x is the line built for Spring Boot 4.1)
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
     
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

@@ -9,3 +9,7 @@ should stations keep a list of historic station data or only generate latest at 
 how do i create a bean myself in spring boot, so for example for a specific class, i create and modify a bean like a service manually and then spring boot does DI
 
 how do i calculate the new measurements from the previous ones and if the previous one doesnt exist yet
+
+
+
+verbessere die fragestellung

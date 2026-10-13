@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flood Monitor</title>
+    <script src="vendor/tailwindcss-browser.js"></script>
+</head>
+<body class="bg-slate-100 text-slate-800">
+<div class="max-w-6xl mx-auto p-4 space-y-4">
+
+    <header class="flex flex-wrap items-center justify-between gap-2">
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+            <i data-lucide="waves" class="w-7 h-7 text-sky-600"></i> Flood Monitor
+        </h1>
+        <div class="flex items-center gap-3 text-sm text-slate-500">
+            <span id="loading" class="hidden items-center gap-1"><i data-lucide="loader-circle" class="w-4 h-4 animate-spin"></i> Lade...</span>
+            <span id="updated"></span>
+        </div>
+    </header>
+
+    <div id="error" class="hidden rounded-lg border border-red-300 bg-red-50 text-red-800 p-3">
+        <div class="flex items-start gap-2">
+            <i data-lucide="triangle-alert" class="w-5 h-5 mt-0.5 shrink-0"></i>
+            <span id="errorText"></span>
+        </div>
+    </div>
+
+    <!-- Steuerung -->
+    <section class="bg-white rounded-xl shadow-sm p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label class="text-sm">Messstation
+            <select id="station" class="mt-1 w-full rounded-md border border-slate-300 p-2"></select>
+        </label>
+        <label class="text-sm">Von
+            <input id="from" type="datetime-local" class="mt-1 w-full rounded-md border border-slate-300 p-2">
+        </label>
+        <label class="text-sm">Bis
+            <input id="to" type="datetime-local" class="mt-1 w-full rounded-md border border-slate-300 p-2">
+        </label>
+        <label class="text-sm">Warnstufe
+            <select id="warningLevel" class="mt-1 w-full rounded-md border border-slate-300 p-2">
+                <option value="">Alle</option>
+                <option>NORMAL</option>
+                <option>WARNING</option>
+                <option>CRITICAL</option>
+                <option>UNKNOWN</option>
+            </select>
+        </label>
+        <label class="text-sm">Limit (1 bis 1000)
+            <input id="limit" type="number" value="50" class="mt-1 w-full rounded-md border border-slate-300 p-2">
+        </label>
+        <div class="text-sm">Format
+            <div class="mt-1 inline-flex rounded-md border border-slate-300 overflow-hidden w-full">
+                <button type="button" data-format="json" class="format-btn flex-1 p-2">JSON</button>
+                <button type="button" data-format="xml" class="format-btn flex-1 p-2">XML</button>
+            </div>
+        </div>
+        <label class="text-sm">Aktualisierung
+            <select id="interval" class="mt-1 w-full rounded-md border border-slate-300 p-2">
+                <option value="0">Aus</option>
+                <option value="5000">alle 5 s</option>
+                <option value="10000" selected>alle 10 s</option>
+                <option value="30000">alle 30 s</option>
+            </select>
+        </label>
+        <div class="flex items-end gap-2">
+            <button id="apply" type="button" class="flex-1 rounded-md bg-sky-600 text-white p-2 hover:bg-sky-700 flex items-center justify-center gap-1">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Aktualisieren
+            </button>
+            <button id="reset" type="button" class="rounded-md border border-slate-300 p-2 hover:bg-slate-50" title="Filter zurücksetzen">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Aktueller Messwert -->
+    <section class="bg-white rounded-xl shadow-sm p-4">
+        <h2 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 text-sky-600"></i> Aktueller Messwert</h2>
+        <div id="current" class="text-slate-500">Keine Station ausgewählt.</div>
+    </section>
+
+    <!-- Historie -->
+    <section class="bg-white rounded-xl shadow-sm p-4">
+        <h2 class="font-semibold mb-3 flex items-center gap-2">
+            <i data-lucide="table" class="w-5 h-5 text-sky-600"></i> Historische Messwerte
+            <span id="count" class="text-sm font-normal text-slate-500"></span>
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead class="text-slate-500 border-b border-slate-200">
+                <tr>
+                    <th class="py-2 pr-3">Station</th>
+                    <th class="py-2 pr-3">Zeitpunkt</th>
+                    <th class="py-2 pr-3 text-right">Wasserstand (cm)</th>
+                    <th class="py-2 pr-3 text-right">Durchfluss (m³/s)</th>
+                    <th class="py-2 pr-3 text-right">Niederschlag (mm/h)</th>
+                    <th class="py-2 pr-3 text-right">Akku (%)</th>
+                    <th class="py-2 pr-3">Status</th>
+                    <th class="py-2">Warnstufe</th>
+                </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="text-xs text-slate-400 text-center">
+        API-Dokumentation: <a class="underline" href="swagger-ui.html">Swagger UI</a>
+    </footer>
+</div>
+
+<script src="vendor/jquery.min.js"></script>
+<script src="vendor/lucide.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

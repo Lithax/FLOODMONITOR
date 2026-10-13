@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindException
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import kotlin.time.Clock
@@ -15,6 +17,7 @@ import kotlin.time.Instant
 @RestControllerAdvice
 class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleNotFound(
         ex: NoSuchElementException, 
         request: HttpServletRequest
@@ -29,6 +32,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleTypeMismatch(
         ex: MethodArgumentTypeMismatchException, 
         request: HttpServletRequest
@@ -45,7 +49,27 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }
 
+    @ExceptionHandler(BindException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleBind(
+        ex: BindException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        val message = ex.fieldErrors
+            .joinToString("; ") { "Parameter '${it.field}' has invalid value '${it.rejectedValue}'." }
+            .ifEmpty { "Invalid request parameters" }
+
+        val error = ErrorResponse(
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = HttpStatus.BAD_REQUEST.reasonPhrase,
+            message = message,
+            path = request.requestURI
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
+    }
+
     @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleIllegalArgument(
         ex: IllegalArgumentException, 
         request: HttpServletRequest
@@ -60,6 +84,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMediaTypeNotAcceptableException::class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     fun handleNotAcceptable(
         ex: HttpMediaTypeNotAcceptableException, 
         request: HttpServletRequest
@@ -74,6 +99,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleGeneralException(
         ex: Exception, 
         request: HttpServletRequest

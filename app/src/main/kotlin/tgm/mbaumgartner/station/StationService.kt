@@ -9,6 +9,10 @@ import kotlin.time.Instant
 
 @Service
 class StationService {
+    companion object {
+        const val MAX_LIMIT = 1000
+    }
+
     @field:Value($$"${simulation.enabled}")
     var isEnabled: Boolean = true
     val stations: MutableMap<Int, Station> = HashMap()
@@ -18,14 +22,23 @@ class StationService {
     }
     
     fun filterMeasurements(id: Int, filter: StationDataFilter): List<StationData> {
-        var stations = getStation(id).measurements.filter(filter::matches)
-        if(filter.limit != null)
-            if(filter.limit < 1)
-                return stations.subList(0, filter.limit)
-            else throw IllegalArgumentException("Filter limit > 0")
-        return stations
+        val measurements = getStation(id).measurements
+        val from = filter.from
+        val to = filter.to
+        val limit = filter.limit
+        require(limit == null || limit in 1..MAX_LIMIT) { "limit must be between 1 and $MAX_LIMIT" }
+        require(from == null || to == null || from <= to) { "'from' must not be after 'to'" }
+        val result = measurements.filter(filter::matches)
+        return if (limit == null) result else result.takeLast(limit)
     }
-    
+
+    // NORMAL below the warning value, WARNING from the warning value, CRITICAL from the critical value
+    fun calculateWarningLevel(station: Station, waterLevel: Double): WarningLevel = when {
+        waterLevel >= station.criticalWaterLevel -> WarningLevel.CRITICAL
+        waterLevel >= station.warningWaterLevel -> WarningLevel.WARNING
+        else -> WarningLevel.NORMAL
+    }
+
     fun filterStations(filter: StationFilter): List<Station> {
         return stations.values.filter(filter::matches)
     }
@@ -76,11 +89,7 @@ class StationService {
             if(newBatteryLevel <= 0.0) newStationStatus = StationStatus.OFFLINE
             if(newBatteryLevel <= 15.0) newStationStatus = StationStatus.MAINTENANCE
             
-            var newWarningLevel = when {
-                newWaterLevel <= station.normalWaterLevel -> WarningLevel.NORMAL
-                newWaterLevel < station.criticalWaterLevel -> WarningLevel.WARNING
-                else -> WarningLevel.CRITICAL
-            }
+            val newWarningLevel = calculateWarningLevel(station, newWaterLevel)
             
             station.measurements.add(
                 StationData(
@@ -118,8 +127,8 @@ data class StationDataFilter(
     val warningLevel: WarningLevel? = null
 ) {
     fun matches(stationData: StationData): Boolean {
-        if(from != null && from < stationData.timestamp) return false
-        if(to != null && to > stationData.timestamp) return false
+        if(from != null && stationData.timestamp < from) return false
+        if(to != null && stationData.timestamp > to) return false
         if (warningLevel != null && warningLevel != stationData.warningLevel) return false
         return true
     }
